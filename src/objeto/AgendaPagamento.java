@@ -42,6 +42,34 @@ public class AgendaPagamento {
 		this.countMax = AgendaPagamento.DEFAULT;
 	}
 	
+	public int getCount() {
+		return this.count;
+	}
+	
+	public void addCount() {
+		this.count++;
+	}
+	
+	public void zeroCount() {
+		this.count = 0;
+	}
+	
+	public int getTipo() {
+		return this.tipo;
+	}
+	
+	public int getDia() {
+		return this.dia;
+	}
+	
+	public int getDiaSemana() {
+		return this.diaSemana;
+	}
+	
+	public int getCountMax() {
+		return this.countMax;
+	}
+	
 	@Override
 	public String toString() {
 		String saida = "";
@@ -88,7 +116,7 @@ public class AgendaPagamento {
 		return saida;
 	}
 	
-	private String diaDaSemana(int dia) {
+	public String diaDaSemana(int dia) {
 		String saida = "";
 		
 		if(dia == GregorianCalendar.MONDAY) {

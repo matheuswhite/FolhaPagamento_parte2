@@ -366,7 +366,7 @@ public class Main {
 						if(!Main.duplicate(List_agenda, nova)) {
 							List_agenda.add(nova);
 							System.out.println("Agenda de pagamento criada!!!");
-							undo_folha.push(AGENDA);
+							undo_folha.push(CRIAR_AGENDA);
 						}
 						else {
 							System.out.println("Agenda já existente");
@@ -390,9 +390,17 @@ public class Main {
 					if(undo_folha_int==1)
 					{
 						folhaPagamento.retornaDia();
+						redo.push(new ArrayList<Funcionario>(list_Funcionario));
+						list_Funcionario=new ArrayList<Funcionario>(undo.pop());
 					}	
-					redo.push(new ArrayList<Funcionario>(list_Funcionario));
-					list_Funcionario=new ArrayList<Funcionario>(undo.pop());
+					else if(undo_folha_int == CRIAR_AGENDA) {
+						redo_Agenda.push(new ArrayList<AgendaPagamento>(List_agenda));
+						List_agenda = new ArrayList<AgendaPagamento>(undo_Agenda.pop());
+					}
+					else {
+						redo.push(new ArrayList<Funcionario>(list_Funcionario));
+						list_Funcionario=new ArrayList<Funcionario>(undo.pop());
+					}
 				}catch(Exception e)
 				{
 					System.out.println("Erro!!\nNao se pode realiza a acao!");
@@ -406,10 +414,19 @@ public class Main {
 					if(redo_folha_int==1)
 					{
 						folhaPagamento.adicionaDia();
-						System.out.println(folhaPagamento.geraPagamento(list_Funcionario));	
+						System.out.println(folhaPagamento.geraPagamento(list_Funcionario));
+						undo.push(new ArrayList<Funcionario>(list_Funcionario));
+						list_Funcionario=new ArrayList<Funcionario>(redo.pop());
+						
 					}
-					undo.push(new ArrayList<Funcionario>(list_Funcionario));
-					list_Funcionario=new ArrayList<Funcionario>(redo.pop());
+					else if(redo_folha_int == CRIAR_AGENDA) {
+						undo_Agenda.push(new ArrayList<AgendaPagamento>(List_agenda));
+						List_agenda = new ArrayList<AgendaPagamento>(redo_Agenda.pop());
+					}
+					else {
+						undo.push(new ArrayList<Funcionario>(list_Funcionario));
+						list_Funcionario=new ArrayList<Funcionario>(redo.pop());
+					}
 				}catch(Exception e)
 				{
 					System.out.println("Erro!!\nNao se pode realiza a acao!");

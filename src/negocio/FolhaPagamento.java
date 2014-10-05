@@ -27,16 +27,39 @@ public class FolhaPagamento {
 		this.gegorianCal.add(this.gegorianCal.DATE, 1);
 		for(Funcionario obj_funcionario : list_funcionario)
 		{
-			if(obj_funcionario instanceof Comissionado)
-			{
-				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
+			if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.DEFAULT) {
+				if(obj_funcionario instanceof Comissionado)
 				{
-					if(((Comissionado) obj_funcionario).isPagamento())
+					if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
 					{
-						((Comissionado) obj_funcionario).setPagamento(false);
+						if(((Comissionado) obj_funcionario).isPagamento())
+						{
+							((Comissionado) obj_funcionario).setPagamento(false);
+						}
+						else
+							((Comissionado) obj_funcionario).setPagamento(true);
+					}
+				}
+			}
+			else if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.BISEMANAL) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)== obj_funcionario.getAgendaPagamento().getDiaSemana())
+				{
+					if(obj_funcionario.isPagamento())
+					{
+						obj_funcionario.setPagamento(false);
 					}
 					else
-						((Comissionado) obj_funcionario).setPagamento(true);
+						obj_funcionario.setPagamento(true);
+				}
+			}
+			else if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.CADA_SEMANA) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)== obj_funcionario.getAgendaPagamento().getDiaSemana()) {
+					if(obj_funcionario.getAgendaPagamento().getCount() == obj_funcionario.getAgendaPagamento().getCountMax() - 1) {
+						obj_funcionario.getAgendaPagamento().zeroCount();
+					}
+					else {
+						obj_funcionario.getAgendaPagamento().addCount();
+					}
 				}
 			}
 		}
@@ -54,7 +77,6 @@ public class FolhaPagamento {
 		this.gegorianCal.add(this.gegorianCal.DATE, 1);
 	}
 	
-	//poderia usar um switch
 	
 	@SuppressWarnings("static-access")
 	public String getDate()
@@ -98,30 +120,64 @@ public class FolhaPagamento {
 		ArrayList<Funcionario> list_funcionario_aux = new ArrayList<Funcionario>(list_funcionario);
 		for(Funcionario obj_funcionario : list_funcionario_aux)
 		{
-			if(obj_funcionario instanceof Assalariado && ! (obj_funcionario instanceof Comissionado))
-			{
-				if(this.gegorianCal.get(this.gegorianCal.DATE)==this.gegorianCal.getMaximum(this.gegorianCal.DATE))
+			if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.DEFAULT) {
+				if(obj_funcionario instanceof Assalariado && ! (obj_funcionario instanceof Comissionado))
 				{
-					pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
-				}
-			}
-			if(obj_funcionario instanceof Horista)
-			{
-				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
-				{
-					pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
-				}
-			}
-			if(obj_funcionario instanceof Comissionado)
-			{
-				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
-				{
-					if(((Comissionado) obj_funcionario).isPagamento())
+					if(this.gegorianCal.get(this.gegorianCal.DATE)==this.gegorianCal.getMaximum(this.gegorianCal.DATE))
 					{
 						pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
 					}
 				}
+				if(obj_funcionario instanceof Horista)
+				{
+					if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
+					{
+						pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
+					}
+				}
+				if(obj_funcionario instanceof Comissionado)
+				{
+					if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
+					{
+						if(((Comissionado) obj_funcionario).isPagamento())
+						{
+							pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
+						}
+					}
+				}
 			}
+			else if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.MENSAL) {
+				if(obj_funcionario.getAgendaPagamento().getDia() == AgendaPagamento.ULTIMO_DIA) {
+					if(this.gegorianCal.get(this.gegorianCal.DATE)==this.gegorianCal.getMaximum(this.gegorianCal.DATE)) {
+						pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
+					}
+				}
+				else {
+					if(this.gegorianCal.get(this.gegorianCal.DATE)== obj_funcionario.getAgendaPagamento().getDia()) {
+						pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
+					}
+				}
+			}
+			else if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.SEMANAL) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)== obj_funcionario.getAgendaPagamento().getDiaSemana()) {
+					pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
+				}
+			}
+			else if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.BISEMANAL) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)== obj_funcionario.getAgendaPagamento().getDiaSemana()) {
+					if(obj_funcionario.isPagamento()) {
+						pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
+					}
+				}
+			}
+			else if(obj_funcionario.getAgendaPagamento().getTipo() == AgendaPagamento.CADA_SEMANA) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)== obj_funcionario.getAgendaPagamento().getDiaSemana()) {
+					if(obj_funcionario.getAgendaPagamento().getCount() == 0) {
+						pagamento=pagamento.concat("\n\n"+obj_funcionario.pagamento());
+					}
+				}
+			}
+			
 		}
 		return pagamento;
 	}
@@ -134,8 +190,43 @@ public class FolhaPagamento {
 		ArrayList<Funcionario> list_funcionario_aux = new ArrayList<Funcionario>(list_funcionario);
 		for(int i=0 ; i < list_funcionario_aux.size() ; i++)
 		{
-			if(list_funcionario_aux.get(i) instanceof Assalariado && ! (list_funcionario.get(i) instanceof Comissionado))
-			{
+			if(list_funcionario_aux.get(i).getAgendaPagamento().getTipo() == AgendaPagamento.DEFAULT) {
+				if(list_funcionario_aux.get(i) instanceof Assalariado && ! (list_funcionario.get(i) instanceof Comissionado))
+				{
+					int diaultil = 0;
+					if(this.gegorianCal.SUNDAY==this.gegorianCal.getMaximum(this.gegorianCal.DATE))
+						diaultil=-2;
+					if(this.gegorianCal.SATURDAY==this.gegorianCal.getMaximum(this.gegorianCal.DATE))
+						diaultil=-1;
+					if(this.gegorianCal.get(this.gegorianCal.DATE)+diaultil==this.gegorianCal.getMaximum(this.gegorianCal.DATE))
+					{
+						list_funcionario_aux.set(i, new Assalariado(list_funcionario_aux.get(i)));
+						list_funcionario_aux.get(i).list_pagamento.clear();
+					}
+				}
+				if(list_funcionario.get(i) instanceof Horista)
+				{
+					if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
+					{
+						list_funcionario_aux.set(i, new Horista(list_funcionario_aux.get(i)));
+						list_funcionario_aux.get(i).list_cartao.clear();
+						list_funcionario_aux.get(i).list_pagamento.clear();
+					}
+				}
+				if(list_funcionario.get(i) instanceof Comissionado)
+				{
+					if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
+					{
+						if(((Comissionado) list_funcionario.get(i)).isPagamento())
+						{
+							list_funcionario_aux.set(i, new Comissionado(list_funcionario_aux.get(i)));
+							list_funcionario_aux.get(i).list_venda.clear();
+							list_funcionario_aux.get(i).list_pagamento.clear();
+						}
+					}
+				}
+			}
+			else if(list_funcionario_aux.get(i).getAgendaPagamento().getTipo() == AgendaPagamento.MENSAL) {
 				int diaultil = 0;
 				if(this.gegorianCal.SUNDAY==this.gegorianCal.getMaximum(this.gegorianCal.DATE))
 					diaultil=-2;
@@ -143,31 +234,41 @@ public class FolhaPagamento {
 					diaultil=-1;
 				if(this.gegorianCal.get(this.gegorianCal.DATE)+diaultil==this.gegorianCal.getMaximum(this.gegorianCal.DATE))
 				{
-					list_funcionario_aux.set(i, new Assalariado(list_funcionario_aux.get(i)));
+					list_funcionario_aux.set(i, new Funcionario(list_funcionario_aux.get(i)));
 					list_funcionario_aux.get(i).list_pagamento.clear();
 				}
 			}
-			if(list_funcionario.get(i) instanceof Horista)
-			{
-				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
+			else if(list_funcionario_aux.get(i).getAgendaPagamento().getTipo() == AgendaPagamento.SEMANAL) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==list_funcionario_aux.get(i).getAgendaPagamento().getDiaSemana())
 				{
-					list_funcionario_aux.set(i, new Horista(list_funcionario_aux.get(i)));
+					list_funcionario_aux.set(i, new Funcionario(list_funcionario_aux.get(i)));
 					list_funcionario_aux.get(i).list_cartao.clear();
 					list_funcionario_aux.get(i).list_pagamento.clear();
 				}
 			}
-			if(list_funcionario.get(i) instanceof Comissionado)
-			{
-				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==this.gegorianCal.FRIDAY)
+			else if(list_funcionario_aux.get(i).getAgendaPagamento().getTipo() == AgendaPagamento.BISEMANAL) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==list_funcionario_aux.get(i).getAgendaPagamento().getDiaSemana())
 				{
-					if(((Comissionado) list_funcionario.get(i)).isPagamento())
+					if(list_funcionario.get(i).isPagamento())
 					{
-						list_funcionario_aux.set(i, new Comissionado(list_funcionario_aux.get(i)));
+						list_funcionario_aux.set(i, new Funcionario(list_funcionario_aux.get(i)));
 						list_funcionario_aux.get(i).list_venda.clear();
 						list_funcionario_aux.get(i).list_pagamento.clear();
 					}
 				}
 			}
+			else if(list_funcionario_aux.get(i).getAgendaPagamento().getTipo() == AgendaPagamento.CADA_SEMANA) {
+				if(this.gegorianCal.get(this.gegorianCal.DAY_OF_WEEK)==list_funcionario_aux.get(i).getAgendaPagamento().getDiaSemana())
+				{
+					if(list_funcionario.get(i).getAgendaPagamento().getCount() == 0)
+					{
+						list_funcionario_aux.set(i, new Funcionario(list_funcionario_aux.get(i)));
+						list_funcionario_aux.get(i).list_venda.clear();
+						list_funcionario_aux.get(i).list_pagamento.clear();
+					}
+				}
+			}
+			
 		}
 		return list_funcionario_aux;
 	}

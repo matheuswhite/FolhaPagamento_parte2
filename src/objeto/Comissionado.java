@@ -6,13 +6,11 @@ public class Comissionado extends Assalariado
 {
 
 	private float comissao;
-	private boolean pagamento;
 
 	public Comissionado(Funcionario obj_comissionado)
 	{
 		super(obj_comissionado);
 		this.comissao=((Comissionado)obj_comissionado).getComissao();
-		this.pagamento=((Comissionado)obj_comissionado).isPagamento();
 	}
 	
 	public Comissionado(String nome, String enderenco, int matricula,
@@ -20,7 +18,6 @@ public class Comissionado extends Assalariado
 		super(nome, enderenco, matricula, sindicato, tipo_pagamento, salario);
 		// TODO Auto-generated constructor stub
 		this.comissao=comissao;
-		this.pagamento=true;
 	}
 	
 	public Comissionado(String nome, String enderenco, int matricula,
@@ -28,15 +25,6 @@ public class Comissionado extends Assalariado
 		super(nome, enderenco, matricula, sindicato, tipo_pagamento, salario, obj_sindicato);
 		// TODO Auto-generated constructor stub
 		this.comissao=comissao;
-		this.pagamento=true;
-	}
-	
-	public boolean isPagamento() {
-		return pagamento;
-	}
-
-	public void setPagamento(boolean pagamento) {
-		this.pagamento = pagamento;
 	}
 
 	public float getComissao() {

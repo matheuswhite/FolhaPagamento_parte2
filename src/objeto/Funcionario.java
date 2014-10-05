@@ -14,6 +14,7 @@ public class Funcionario
 	public ArrayList<Venda> list_venda;
 	public ArrayList<Pagamento> list_pagamento;
 	protected AgendaPagamento agenda;
+	protected boolean pagamento;
 	
 	protected static final int cheque_correios = 0;
 	protected static final int cheque_maos     = 1;
@@ -30,6 +31,7 @@ public class Funcionario
 		this.list_venda=new ArrayList<Venda>(obj_funcionario.list_venda);
 		this.list_pagamento=new ArrayList<Pagamento>(obj_funcionario.list_pagamento);
 		this.list_cartao=new ArrayList<CartaoPonto>(obj_funcionario.list_cartao);
+		this.pagamento = obj_funcionario.isPagamento();
 		if(this.sindicato)
 			this.obj_sindicato=obj_funcionario.getObj_sindicato();
 		else 
@@ -46,6 +48,7 @@ public class Funcionario
 		this.list_venda=new ArrayList<Venda>();
 		this.list_pagamento=new ArrayList<Pagamento>();
 		this.list_cartao=new ArrayList<CartaoPonto>();
+		this.pagamento = true;
 		if(this.sindicato)
 			this.obj_sindicato=obj_sindicato;
 		else 
@@ -60,6 +63,7 @@ public class Funcionario
 		this.matricula = matricula;
 		this.sindicato = sindicato;
 		this.tipo_pagamento = tipo_pagamento;
+		this.pagamento = true;
 		if(this.sindicato)
 			this.obj_sindicato=obj_sindicato;
 		else 
@@ -68,6 +72,14 @@ public class Funcionario
 		this.list_venda=new ArrayList<Venda>();
 		this.list_pagamento=new ArrayList<Pagamento>();
 		this.list_cartao=new ArrayList<CartaoPonto>();
+	}
+	
+	public boolean isPagamento() {
+		return pagamento;
+	}
+
+	public void setPagamento(boolean pagamento) {
+		this.pagamento = pagamento;
 	}
 	
 	public void setAgenda(AgendaPagamento agenda) {
@@ -167,6 +179,28 @@ public class Funcionario
 			retorno = retorno + ", sindicato=sim, taxa do sindicato="+this.obj_sindicato.getTaxa()+ ", id="+ this.obj_sindicato.getMatricula_sindicato();
 		else
 			retorno = retorno + ", sindicato=nao";
+		
+		switch (this.agenda.getTipo()) {
+		case AgendaPagamento.MENSAL:
+			retorno += ", Tipo: Mensal";
+			retorno += ", Dia: " + this.agenda.getDia();
+			break;
+		case AgendaPagamento.SEMANAL:
+			retorno += ", Tipo: Semanal";
+			retorno += ", Dia da Semana: " + this.agenda.diaDaSemana(this.agenda.getDiaSemana());
+			break;
+		case AgendaPagamento.BISEMANAL:
+			retorno += ", Tipo: Bisemanal";
+			retorno += ", Dia da Semana: " + this.agenda.diaDaSemana(this.agenda.getDiaSemana());
+			break;
+		case AgendaPagamento.CADA_SEMANA:
+			retorno += ", Tipo: A cada " + this.agenda.getCountMax() + " semanas";
+			retorno += ", Dia da Semana: " + this.agenda.diaDaSemana(this.agenda.getDiaSemana());
+			break;
+		default:
+			break;
+		}
+		
 		return retorno;
 	}
 	public void addVenda(Venda obj_venda)
